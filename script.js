@@ -4,7 +4,9 @@ const canvas = document.createElement('canvas');
 const context = canvas.getContext('2d');
 const width = 500;
 const height = 700;
-const screenWidth = window.screen.width;
+// const screenWidth = window.screen.width;
+
+let screenWidth = window.innerWidth; /* to allow for window smaller than full screen*/
 const canvasPosition = screenWidth / 2 - width / 2;
 const isMobile = window.matchMedia('(max-width: 600px)');
 const gameOverEl = document.createElement('div');
@@ -34,6 +36,7 @@ if (isMobile.matches) {
   speedY = -2;
   speedX = speedY;
   computerSpeed = 4;
+  screenWidth = window.screen.width;
 } else {
   speedY = -1;
   speedX = speedY;
@@ -89,9 +92,6 @@ function createCanvas() {
   body.appendChild(canvas);
   renderCanvas();
 }
-
-// Remove this
-createCanvas();
 
 // Reset Ball to Center
 function ballReset() {
@@ -208,7 +208,7 @@ function animate() {
   ballMove();
   ballBoundaries();
   computerAI();
-  
+  window.requestAnimationFrame(animate);
 }
 
 // Start Game, Reset Everything
@@ -225,7 +225,8 @@ function startGame() {
   createCanvas();
   animate();
   canvas.addEventListener('mousemove', (e) => {
-    console.log(e.clientX);
+    console.log(e.clientX, canvasPosition, paddleDiff);
+    console.log(screenWidth);
     playerMoved = true;
     // Compensate for canvas being centered
     paddleBottomX = e.clientX - canvasPosition - paddleDiff;
@@ -236,9 +237,9 @@ function startGame() {
       paddleBottomX = width - paddleWidth;
     }
     // Hide Cursor
-    canvas.style.cursor = 'none';
+    canvas.style.cursor = 'crosshair';
   });
 }
 
 // On Load
-// startGame();
+startGame();
